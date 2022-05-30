@@ -1,15 +1,11 @@
-package com.example.wiuh.activity;
+package com.example.wiuh.activity.setup;
 
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.wiuh.R;
@@ -33,7 +29,7 @@ public class PersonalSetupActivity extends AppCompatActivity {
         nickname.setText(nick);
 
         Button editNickname = findViewById(R.id.editNickname);
-        TextView textView=findViewById(R.id.logoutTextview);
+        TextView textView = findViewById(R.id.logoutTextview);
 
         editNickname.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -48,7 +44,7 @@ public class PersonalSetupActivity extends AppCompatActivity {
                         .setDisplayName(nick)
                         .build();
                 FirebaseUtil.getCurUser().updateProfile(profileUpdates);
-                ToastUtil.showText(getApplicationContext(),"닉네임 변경 완료");
+                ToastUtil.showText(getApplicationContext(), "닉네임 변경 완료");
             }
         });
 
@@ -56,7 +52,7 @@ public class PersonalSetupActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 FirebaseUtil.logout(getApplicationContext());
-                ToastUtil.showText(getApplicationContext(),"로그아웃");
+                ToastUtil.showText(getApplicationContext(), "로그아웃");
             }
         });
 

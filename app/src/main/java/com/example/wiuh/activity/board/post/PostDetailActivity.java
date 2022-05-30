@@ -1,4 +1,4 @@
-package com.example.wiuh.activity.post;
+package com.example.wiuh.activity.board.post;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -12,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.wiuh.R;
+import com.example.wiuh.activity.board.post.ModifyPostActivity;
 import com.example.wiuh.model.Post;
 import com.example.wiuh.util.FirebaseUtil;
 import com.example.wiuh.util.ToastUtil;

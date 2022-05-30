@@ -10,11 +10,8 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import com.example.wiuh.R;
-import com.example.wiuh.ui.memo.MemoAdapter;
 import com.example.wiuh.util.FirebaseUtil;
 import com.example.wiuh.util.ToastUtil;
 import com.google.firebase.auth.FirebaseUser;
@@ -48,14 +45,14 @@ public class SetupFragment extends Fragment {
                         .setDisplayName(nick)
                         .build();
                 FirebaseUtil.getCurUser().updateProfile(profileUpdates);
-                ToastUtil.showText(getContext(),"닉네임 변경 완료");
+                ToastUtil.showText(getContext(), "닉네임 변경 완료");
             }
         });
         logoutTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 FirebaseUtil.logout(getContext());
-                ToastUtil.showText(getContext(),"로그아웃");
+                ToastUtil.showText(getContext(), "로그아웃");
             }
         });
         return root;

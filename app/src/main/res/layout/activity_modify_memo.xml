@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activity.memo.MemoDetailActivity">
+    tools:context=".activity.board.memo.MemoDetailActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -23,9 +23,9 @@
             android:id="@+id/mod_memoBody"
             android:layout_width="match_parent"
             android:layout_height="580dp"
+            android:gravity="top"
             android:paddingLeft="20dp"
             android:text="Body"
-            android:gravity="top"
             android:textColor="@color/black"
             android:textSize="20dp" />
 

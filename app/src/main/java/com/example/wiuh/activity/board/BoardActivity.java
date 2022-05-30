@@ -1,4 +1,4 @@
-package com.example.wiuh.activity;
+package com.example.wiuh.activity.board;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -7,11 +7,10 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Spinner;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -24,8 +23,11 @@ import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.wiuh.R;
 import com.example.wiuh.WifiInfo;
-import com.example.wiuh.activity.memo.AddMemoActivity;
-import com.example.wiuh.activity.post.AddPostActivity;
+import com.example.wiuh.activity.board.memo.AddMemoActivity;
+import com.example.wiuh.activity.board.post.AddPostActivity;
+import com.example.wiuh.activity.setup.PersonalSetupActivity;
+import com.example.wiuh.activity.setup.SetupActivity;
+import com.example.wiuh.activity.sign.LoginActivity;
 import com.example.wiuh.model.Memo;
 import com.example.wiuh.model.Post;
 import com.example.wiuh.ui.community.CommunityFragment;
@@ -43,6 +45,7 @@ import com.google.android.material.tabs.TabLayoutMediator;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
+import com.tiper.MaterialSpinner;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -63,13 +66,10 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
  */
 public class BoardActivity extends AppCompatActivity {
 
-    private List<String> starredList;
+    MaterialSpinner spinner;
     private Map<String, String> ssidToMac;          //ssid로 mac 주소 획득
-
     private List<String> spinnerList;                  //spinner에 표시될 ssid array
     private ArrayAdapter<String> spinnerAdapter;
-    private Menu menu;
-
     private MemoAdapter memoAdapter;
     private PostAdapter postAdapter;
     private ValueEventListener memoListener;
@@ -83,7 +83,6 @@ public class BoardActivity extends AppCompatActivity {
         memoAdapter = new MemoAdapter(new ArrayList<>(), this);
         postAdapter = new PostAdapter(new ArrayList<>(), this);
         spinnerList = new ArrayList<>();
-        starredList = new ArrayList<>();
         ssidToMac = new HashMap<>();
         spinnerAdapter = new ArrayAdapter<>(
                 this, android.R.layout.simple_spinner_item, spinnerList
@@ -121,6 +120,7 @@ public class BoardActivity extends AppCompatActivity {
                 List<Post> list = new ArrayList<>();
                 for (DataSnapshot ds : snapshot.getChildren()) {
                     Post p = ds.getValue(Post.class);
+                    assert p != null;
                     p.setKey(ds.getKey());
                     list.add(p);
                 }
@@ -138,6 +138,7 @@ public class BoardActivity extends AppCompatActivity {
                 List<Memo> list = new ArrayList<>();
                 for (DataSnapshot ds : snapshot.getChildren()) {
                     Memo m = ds.getValue(Memo.class);
+                    assert m != null;
                     m.setKey(ds.getKey());
                     list.add(m);
                 }
@@ -198,7 +199,7 @@ public class BoardActivity extends AppCompatActivity {
         FirebaseUtil.getWifiRef().addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                for(DataSnapshot ds : snapshot.getChildren()) {
+                for (DataSnapshot ds : snapshot.getChildren()) {
                     tmpList.add(ds.getValue(String.class));
                     ssidToMac.put(ds.getValue(String.class), ds.getKey());
                 }
@@ -207,17 +208,14 @@ public class BoardActivity extends AppCompatActivity {
                                 .filter(ssid -> !spinnerList.contains(ssid))
                                 .collect(Collectors.toList())
                 );
-                starredList.addAll(
-                        tmpList.stream()
-                                .filter(ssid -> !spinnerList.contains(ssid))
-                                .collect(Collectors.toList())
-                );
 
                 spinnerAdapter.notifyDataSetChanged();
+                spinner.setSelection(0);
             }
 
             @Override
-            public void onCancelled(@NonNull DatabaseError error) { }
+            public void onCancelled(@NonNull DatabaseError error) {
+            }
         });
     }
 
@@ -259,33 +257,33 @@ public class BoardActivity extends AppCompatActivity {
     }
 
     private void setUpSpinner() {
-        Toolbar toolbar= findViewById(R.id.toolbar);  //toolbar(커스텀)를 actionbar로 만듦
+        Toolbar toolbar = findViewById(R.id.toolbar);  //toolbar(커스텀)를 actionbar로 만듦
         setSupportActionBar(toolbar);                 //actionbar에 toolbar대입
 
         ActionBar actionBar = getSupportActionBar();
+        assert actionBar != null;
         actionBar.setDisplayShowCustomEnabled(true);  //커스터마이징 하기 위해 필요
         actionBar.setDisplayShowTitleEnabled(false);  //원래 title 숨기기
 
-        Spinner spinner = findViewById(R.id.spinner);
+        spinner = findViewById(R.id.spinner);
 
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_item);
         //스피너 객체에다가 어댑터 넣어줌
         spinner.setAdapter(spinnerAdapter);
-        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            //선택되면
+        spinner.setOnItemSelectedListener(new MaterialSpinner.OnItemSelectedListener() {
             @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
-                String ssid = spinnerList.get(position);
+            public void onItemSelected(@NonNull MaterialSpinner materialSpinner, @Nullable View view, int i, long l) {
+                String ssid = spinnerList.get(i);
                 String mac = ssidToMac.get(ssid);
 
                 WifiInfo.setInfo(ssid, mac);
                 FirebaseUtil.setListener(postListener, memoListener);
-                Snackbar.make(adapterView, "Changed " + ssid, Snackbar.LENGTH_LONG).show();
+                Snackbar.make(materialSpinner, "Select " + ssid, Snackbar.LENGTH_LONG).show();
             }
-            //아무것도 선택되지 않은 상태일때
+
             @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-                Snackbar.make(adapterView, "No SSID selected", Snackbar.LENGTH_LONG).show();
+            public void onNothingSelected(@NonNull MaterialSpinner materialSpinner) {
+                Snackbar.make(materialSpinner, "No SSID selected", Snackbar.LENGTH_LONG).show();
             }
         });
     }
@@ -297,10 +295,12 @@ public class BoardActivity extends AppCompatActivity {
         Intent intent = new Intent(this, AddPostActivity.class);
         startActivity(intent);
     }
+
     private void startAddMemo() {
         Intent intent = new Intent(this, AddMemoActivity.class);
         startActivity(intent);
     }
+
     private void startSetUpActivity() {
         ToastUtil.showText(this, "닉네임을 설정하세요");
         Intent intent = new Intent(this, SetupActivity.class);
@@ -309,7 +309,6 @@ public class BoardActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(@NonNull Menu menu) {
-        this.menu = menu;
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_option, menu);
         return true;
@@ -321,9 +320,6 @@ public class BoardActivity extends AppCompatActivity {
 
         if (itemId == R.id.logout) {
             FirebaseUtil.logout(this);
-        } else if (itemId == R.id.goNotification) {
-            Intent intent = new Intent(this, NotificationHistoryActivity.class);
-            startActivity(intent);
         } else if (itemId == R.id.personalSettings) {
             Intent intent = new Intent(this, PersonalSetupActivity.class);
             startActivity(intent);
@@ -338,9 +334,8 @@ public class BoardActivity extends AppCompatActivity {
                         FirebaseUtil.getWifiRef().child(MAC).setValue(SSID);
                         ToastUtil.showText(this, "등록 성공");
                     })
-                    .setNegativeButton("NO", (dialogInterface, i) -> {
-                        ToastUtil.showText(this, "등록 안함");
-                    });
+                    .setNegativeButton("NO", (dialogInterface, i) ->
+                            ToastUtil.showText(this, "등록 안함"));
             AlertDialog dialog = builder.create();
             dialog.show();
             //startActivity(new Intent(this, AddWifi.class));

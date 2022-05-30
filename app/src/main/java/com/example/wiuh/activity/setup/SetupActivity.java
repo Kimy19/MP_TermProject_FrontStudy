@@ -1,4 +1,4 @@
-package com.example.wiuh.activity;
+package com.example.wiuh.activity.setup;
 
 import android.os.Bundle;
 import android.widget.Button;
