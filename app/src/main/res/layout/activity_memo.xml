@@ -14,6 +14,7 @@
         android:paddingTop="8dp"
         android:paddingBottom="10dp"
         android:text="Title"
+        android:fontFamily="@font/cafe"
         android:textColor="@color/black"
         android:textSize="40dp" />
 
@@ -24,11 +25,12 @@
         android:layout_above="@+id/bottomlayout"
         android:layout_below="@+id/memoTitle"
         android:background="@drawable/blue_border"
+        android:fontFamily="@font/nanum"
         android:paddingLeft="15dp"
         android:paddingTop="20dp"
         android:text="Body"
         android:textColor="@color/black"
-        android:textSize="20dp" />
+        android:textSize="25dp" />
 
     <LinearLayout
         android:id="@+id/bottomlayout"

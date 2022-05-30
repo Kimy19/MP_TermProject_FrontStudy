@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/sky_blue"
+    android:fontFamily="@font/cafe"
     app:titleTextColor="@color/white">
     <!--
         <TextView
@@ -18,9 +19,11 @@
     -->
     <com.tiper.MaterialSpinner
         android:id="@+id/spinner"
+        android:fontFamily="@font/cafe"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:minHeight="48dp"
+        android:theme="@style/SpinnerTheme"
+
         app:boxBackgroundColor="@color/sky_blue"
         app:boxBackgroundMode="filled"
         app:spinnerMode="dialog" />
